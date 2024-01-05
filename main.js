@@ -1,7 +1,7 @@
 const board = 800;
 const cell = 50;
 //16x16
-let currentPhase = 0; //0-15
+let currentPhase = 0; //0-15 -> 5 fases
 let directionFrog = { x: 0, y: 0 };
 let directionRight = { x: 1, y: 0 };
 let directionLeft = { x: -1, y: 0 };
@@ -9,7 +9,8 @@ let directionUp = { x: 0, y: -1 };
 let directionDown = { x: 0, y: 1 };
 //------------------------------
 let positionFrog = { x: 15, y: 15 };
-let positionsTanks = [];
+let positionsTanksRight = [];
+let positionsTanksLeft = [];
 let positionsStaticBombsTransition = [
   { x: 0, y: 6 },
   { x: 2, y: 6 },
@@ -31,8 +32,10 @@ let positionsStaticBombsLast = [
   { x: 13, y: 1 },
   { x: 16, y: 1 },
 ];
-let positionsAtomicBombs = [];
-let positionsOvnis = [];
+let positionsAtomicBombsRight = [];
+let positionsAtomicBombsLeft = [];
+let positionsOvnisRight = [];
+let positionsOvnisLeft = [];
 let positionLotus = [];
 //------------------------------
 let atomicRight;
@@ -45,6 +48,25 @@ let tankRight;
 //------------------------------
 let canvas = null;
 let ctx = null;
+//-----------------------------
+//fases map
+let map;
+(() => {
+  map = new Map();
+  map.set(0, null);
+  map.set(1, [
+    positionsTanksLeft,
+    positionsTanksRight,
+    positionsAtomicBombsRight,
+    positionsAtomicBombsLeft,
+    positionsOvnisLeft,
+    positionsOvnisRight,
+  ]);
+  map.set(2,positionsStaticBombsTransition);
+  //en el lotus haurem de fer la inversa
+  map.set(3,positionLotus);
+  map.set(4,positionsStaticBombsLast)
+})();
 
 const inici = async () => {
   canvas = document.querySelector("#cv");
@@ -89,7 +111,6 @@ const draw = () => {
   lastPhase();
   riverPhase();
   transitionPhase();
-
 };
 const lastPhase = () => {
   ctx.fillStyle = "#68B000";
@@ -117,8 +138,18 @@ const transitionPhase = () => {
   });
 };
 const getFrogCurrentPhase = () => {
-    let positionFrog = { x: 15, y: 15 };
-    
-
-}
+  //5 fases  -> 15 i 14 fase 0 (no colisions)
+  // -> 13,12,11,10,9,8 fase 1 (colisions: tankes, bomba atomica i ovni)
+  // -> 7 fase 2 (colisions:-> bomba)
+  // -> 6,5,4,3,2 fase 3 (el riu)
+  // -> 1 , 0 fase 4 (les bombes)
+  switch (true) {
+    case positionFrog:
+        
+        break;
+  
+    default:
+        break;
+  }
+};
 window.onload = inici;
