@@ -4,16 +4,15 @@ const gameSpeed = 10;
 //------
 let id = 0;
 //-------
-let deltaOvniRight = 800/5;
-  let counterOvniRight = 0;
-  let directionOvniRight = 1
+let deltaOvniRight = 800 / 5 - 10;
+let counterOvniRight = 0;
+let deltaOvniLeft = 800 / 5 - 10;
+let counterOvniLeft = 0;
+let directionOvniRight = 1;
+let directionOvniLeft = -1;
 //16x16
 let currentPhase = 0; //0-15 -> 5 fases
-let directionFrog = { x: 0, y: 0 };
-let directionRight = { x: 1, y: 0 };
-let directionLeft = { x: -1, y: 0 };
-let directionUp = { x: 0, y: -1 };
-let directionDown = { x: 0, y: 1 };
+let locationFrog = { x: 0, y: 0 };
 //------------------------------
 let positionFrog = { x: 15, y: 15 };
 let positionsTanksRight = [];
@@ -58,14 +57,16 @@ let ovni;
 let tankLeft;
 let tankRight;
 let explotion;
+
 //------------------------------
 let canvas = null;
 let ctx = null;
-let explotionTime = 2;
+let explotionBool = false;
+let explotionCounter = 0;
 //-----------------------------
 //fases map
 let map;
-(() => {
+/*(() => { volia fer-ho eficient, xo x hui ja ho tinc be
   map = new Map();
   map.set(0, null);
   map.set(1, [
@@ -86,7 +87,7 @@ let map;
     positionLotus_r11,
   ]);
   map.set(4, positionsStaticBombsLast);
-})();
+})();*/
 const generateNumber = () => {
   return Math.floor(Math.random() * 3) + 1;
 };
@@ -189,8 +190,21 @@ const draw = () => {
   riverPhase();
   transitionPhase();
   warPhase();
-  home();
+  if (explotionBool === true) {
+    //el gameSpeed està en 10, aleshores han de passar 10fotogrames x a q siga 0'1 sec
+    if (explotionCounter < gameSpeed * 10) {
+      explotionCounter += gameSpeed;
+      ctx.drawImage(explotion, 15 * cell, 10 * cell, cell, cell);
+      ctx.drawImage(explotion, 0, 13 * cell, cell, cell);
+
+    } else {
+      explotionBool = false;
+      explotionCounter = 0;
+    }
+  }
   
+
+  home();
 };
 const lastPhase = () => {
   ctx.fillStyle = "#cbf078";
@@ -247,7 +261,7 @@ const updateLotus = () => {
   if (positionLotus_r11.length > 0) {
     if (secondsWaitRank_11 > 0) {
       positionLotus_r11 = positionLotus_r11.filter((item) => {
-        return item.x >= 0 && item.x <= 800;
+        return item.x >= -150 && item.x <= 800;
       });
       positionLotus_r11.forEach((item) => {
         item.x += 1;
@@ -258,7 +272,7 @@ const updateLotus = () => {
       });
       if (positionLotus_r11[positionLotus_r11.length - 1].x >= 350) {
         for (let i = 0; i < groupRank_11; i++) {
-          positionLotus_r11.push({ x: (0 + i) * 50, y: 2 * 50 });
+          positionLotus_r11.push({ x: (0 + i) * -50, y: 2 * 50 });
         }
         groupRank_11 = generateNumber();
         secondsWaitRank_11 = generateNumber() * 1000;
@@ -266,14 +280,14 @@ const updateLotus = () => {
     }
   } else {
     for (let i = 0; i < groupRank_11; i++) {
-      positionLotus_r11.push({ x: (0 + i) * 50, y: 2 * 50 });
+      positionLotus_r11.push({ x: (0 + i) * -50, y: 2 * 50 });
     }
   }
 
   if (positionLotus_r10.length > 0) {
     if (secondsWaitRank_10 > 0) {
       positionLotus_r10 = positionLotus_r10.filter((item) => {
-        return item.x >= 0 && item.x <= 800;
+        return item.x >= -150 && item.x <= 800;
       });
       positionLotus_r10.forEach((item) => {
         item.x += -1;
@@ -299,7 +313,7 @@ const updateLotus = () => {
   if (positionLotus_r9.length > 0) {
     if (secondsWaitRank_9 > 0) {
       positionLotus_r9 = positionLotus_r9.filter((item) => {
-        return item.x >= 0 && item.x <= 800;
+        return item.x >= -150 && item.x <= 800;
       });
       positionLotus_r9.forEach((item) => {
         item.x += 1;
@@ -310,7 +324,7 @@ const updateLotus = () => {
       });
       if (positionLotus_r9[positionLotus_r9.length - 1].x >= 350) {
         for (let i = 0; i < groupRank_9; i++) {
-          positionLotus_r9.push({ x: (0 + i) * 50, y: 50 * 4 });
+          positionLotus_r9.push({ x: (0 + i) * -50, y: 50 * 4 });
         }
         groupRank_9 = generateNumber();
         secondsWaitRank_9 = generateNumber() * 1000;
@@ -318,14 +332,14 @@ const updateLotus = () => {
     }
   } else {
     for (let i = 0; i < groupRank_9; i++) {
-      positionLotus_r9.push({ x: (0 + i) * 50, y: 50 * 4 });
+      positionLotus_r9.push({ x: (0 + i) * -50, y: 50 * 4 });
     }
   }
 
   if (positionLotus_r8.length > 0) {
     if (secondsWaitRank_8 > 0) {
       positionLotus_r8 = positionLotus_r8.filter((item) => {
-        return item.x >= 0 && item.x <= 800;
+        return item.x >= -150 && item.x <= 800;
       });
       positionLotus_r8.forEach((item) => {
         item.x += -1;
@@ -351,7 +365,7 @@ const updateLotus = () => {
   if (positionLotus_r7.length > 0) {
     if (secondsWaitRank_7 > 0) {
       positionLotus_r7 = positionLotus_r7.filter((item) => {
-        return item.x >= 0 && item.x <= 800;
+        return item.x >= -150 && item.x <= 800;
       });
       positionLotus_r7.forEach((item) => {
         item.x += 1;
@@ -362,7 +376,7 @@ const updateLotus = () => {
       });
       if (positionLotus_r7[positionLotus_r7.length - 1].x >= 350) {
         for (let i = 0; i < groupRank_7; i++) {
-          positionLotus_r7.push({ x: (0 + i) * 50, y: 50 * 6 });
+          positionLotus_r7.push({ x: (0 + i) * -50, y: 50 * 6 });
         }
         groupRank_7 = generateNumber();
         secondsWaitRank_7 = generateNumber() * 1000;
@@ -370,7 +384,7 @@ const updateLotus = () => {
     }
   } else {
     for (let i = 0; i < groupRank_7; i++) {
-      positionLotus_r7.push({ x: (0 + i) * 50, y: 50 * 6 });
+      positionLotus_r7.push({ x: (0 + i) * -50, y: 50 * 6 });
     }
   }
 };
@@ -379,38 +393,41 @@ const updateWar = () => {
   //sols posarem un d'estos
   /*let deltaOvniRight = 800/5;
   let counterOvniRight = 0;*/
-  if(positionsOvnisRight.length>0){
-    if(counterOvniRight<deltaOvniRight){
-      positionsOvnisRight[0].x+=5;
+  if (positionsOvnisRight.length > 0) {
+    if (counterOvniRight < deltaOvniRight) {
+      positionsOvnisRight[0].x += 5;
       counterOvniRight++;
-      directionOvniRight=-1; 
-    }else if(counterOvniRight===deltaOvniRight&&directionOvniRight===-1){
-      deltaOvniRight=0;
-      directionOvniRight=1
-    }else if(counterOvniRight>deltaOvniRight){
-      positionsOvnisRight[0].x-=5;
+      directionOvniRight = -1;
+    } else if (
+      counterOvniRight === deltaOvniRight &&
+      directionOvniRight === -1
+    ) {
+      deltaOvniRight = 0;
+      directionOvniRight = 1;
+    } else if (counterOvniRight > deltaOvniRight) {
+      positionsOvnisRight[0].x -= 5;
       counterOvniRight--;
-    }else if(counterOvniRight===deltaOvniRight){
-      deltaOvniRight=800/5;
-      counterOvniRight=0;
+    } else if (counterOvniRight === deltaOvniRight) {
+      deltaOvniRight = 800 / 5 - 10;
+      counterOvniRight = 0;
     }
-  }else{
-    positionsOvnisRight[0] = {x:0,y:400};
+  } else {
+    positionsOvnisRight[0] = { x: 0, y: 400 };
   }
   //ara anema  pel tankleft
   if (positionsTanksLeft.length > 0) {
     if (secondsWaitRank_2 > 0) {
       positionsTanksLeft = positionsTanksLeft.filter((item) => {
-        return item.x >= 0 && item.x <= 800;
+        return item.x > -150 && item.x < 1150;
       });
       positionsTanksLeft.forEach((item) => {
-        item.x += -2;
+        item.x += -1;
       });
     } else {
       positionsTanksLeft.forEach((item) => {
-        item.x += -2;
+        item.x += -1;
       });
-      if (positionsTanksLeft[positionsTanksLeft.length - 1].x <=150) {
+      if (positionsTanksLeft[positionsTanksLeft.length - 1].x <= 100) {
         for (let i = 0; i < groupRank_2; i++) {
           positionsTanksLeft.push({ x: (6 - i) * 150, y: 50 * 9 });
         }
@@ -420,28 +437,86 @@ const updateWar = () => {
     }
   } else {
     for (let i = 0; i < groupRank_2; i++) {
-      positionsTanksLeft.push({ x: (6 - i) * 150, y: 50 * 9});
+      positionsTanksLeft.push({ x: (6 - i) * 150, y: 50 * 9 });
     }
   }
   //ara farem la bomba direcció dreta
+
   if (positionsAtomicBombsRight.length > 0) {
-    if (positionsAtomicBombsRight[0].x<800) {
-      positionsAtomicBombsRight[0].x +=10;
-    }else{
+    if (positionsAtomicBombsRight[0].x < 800) {
+      positionsAtomicBombsRight[0].x += 10;
+    } else {
       positionsAtomicBombsRight.pop();
-      setTimeout(() => {
-        ctx.drawImage(explotion, 15 * cell, 10 * cell, cell, cell);
-    }, 1000);
+      explotionBool = true;
     }
   } else {
-    positionsAtomicBombsRight.push({ x: -100, y: 50 * 10});
+    positionsAtomicBombsRight.push({ x: -100, y: 50 * 10 });
   }
-}
-const home = ()=> {
+  //ara al ovni left
+  if (positionsOvnisLeft.length > 0) {
+    if (counterOvniLeft < deltaOvniLeft) {
+      positionsOvnisLeft[0].x -= 5;
+      counterOvniLeft++;
+      directionOvniLeft = 1;
+    } else if (counterOvniLeft === deltaOvniLeft && directionOvniLeft === 1) {
+      deltaOvniLeft = 0;
+      directionOvniLeft = -1;
+    } else if (counterOvniLeft > deltaOvniLeft) {
+      positionsOvnisLeft[0].x += 5;
+      counterOvniLeft--;
+    } else if (counterOvniLeft === deltaOvniLeft) {
+      deltaOvniLeft = 800 / 5 - 10;
+      counterOvniLeft = 0;
+    }
+  } else {
+    positionsOvnisLeft[0] = { x: 750, y: 550 };
+  }
+  //ara farem el tanque direcció dreta
+
+  if (positionsTanksRight.length > 0) {
+    if (secondsWaitRank_1 > 0) {
+      positionsTanksRight = positionsTanksRight.filter((item) => {
+        return item.x > -450 && item.x < 950;
+      });
+      positionsTanksRight.forEach((item) => {
+        item.x += 1;
+      });
+    } else {
+      positionsTanksRight.forEach((item) => {
+        item.x += 1;
+      });
+      if (positionsTanksRight[positionsTanksRight.length - 1].x >= 550) {
+        for (let i = 0; i < groupRank_1; i++) {
+          positionsTanksRight.push({ x: (0 + i) * -150, y: 50 * 12 });
+          console.log(i);
+        }
+        
+        groupRank_1 = generateNumber();
+        secondsWaitRank_1 = generateNumber() * 1000;
+      }
+    }
+  } else {
+    for (let i = 0; i < groupRank_1; i++) {
+      positionsTanksRight.push({ x: (0 + i) * -150, y: 50 * 12 });
+    }
+  }
+  console.log(positionsTanksRight);
+  //i ara la bomba de dreta a esquerra
+  if (positionsAtomicBombsLeft.length > 0) {
+    if (positionsAtomicBombsLeft[0].x > 0) {
+      positionsAtomicBombsLeft[0].x -= 10;
+    } else {
+      positionsAtomicBombsLeft.pop();
+    }
+  } else {
+    positionsAtomicBombsLeft.push({ x: 900, y: 50 * 13 });
+  }
+};
+const home = () => {
   ctx.fillStyle = "#cbf078";
   ctx.fillRect(0, cell * 14, cell * 16, cell * 6);
   ctx.strokeRect(0, cell * 14, cell * 16, cell * 6);
-}
+};
 
 const warPhase = () => {
   ctx.fillStyle = "#dfd3c3";
@@ -454,12 +529,11 @@ const warPhase = () => {
       positionsOvnisRight,
       positionsTanksLeft,
       positionsAtomicBombsRight,
-      positionsOvnisLeft
+      positionsOvnisLeft,
     ],
-    [150, 100, 50, 150, 100,50],
-    [tankRight, atomicLeft, ovni, tankLeft, atomicRight,ovni]
+    [150, 100, 50, 150, 100, 50],
+    [tankRight, atomicLeft, ovni, tankLeft, atomicRight, ovni]
   );
-
 };
 const getFrogCurrentPhase = () => {
   //5 fases  -> 15 i 14 fase 0 (no colisions)
