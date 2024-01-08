@@ -12,8 +12,8 @@ let directionOvniRight = 1;
 let directionOvniLeft = -1;
 //16x16
 let currentPhase = 0; //0-15 -> 5 fases
-let locationFrog = { x: 0, y: 0 };
 //------------------------------
+let positionFrogAux = {x:15,y:15};
 let positionFrog = { x: 15, y: 15 };
 let positionsTanksRight = [];
 let positionsTanksLeft = [];
@@ -124,7 +124,94 @@ let secondsWaitRank_10 = generateNumber() * 1000;
 let groupRank_11 = generateNumber();
 let secondsWaitRank_11 = generateNumber() * 1000;
 
+//ací controlem el moviment de la granota
+
+const moveFrogRight = () => {
+  positionFrogAux = {x: ++positionFrog.x, y: positionFrog.y};
+  if(positionFrogAux.y*cell<=board || positionFrogAux.y*cell>=0 || positionFrogAux.x*cell<=board || positionFrogAux.x*cell>=0){
+    console.log(positionFrogAux);
+    console.log("entra");
+    positionFrog = { x: ++positionFrog.x, y: positionFrog.y };
+  }else{
+    positionFrog = {x: positionFrog.x, y: positionFrog.y};
+  }
+  
+};
+const moveFrogLeft = () => {
+  positionFrogAux = {x: --positionFrog.x, y: positionFrog.y};
+  //si x<=0
+  if(positionFrogAux.x<=0){
+    console.log(positionFrog);
+    console.log(positionFrogAux);
+    console.log("es negativa");
+    positionFrogAux = {x: positionFrog.x, y: positionFrog.y};
+    positionFrog = {x: positionFrog.x, y: positionFrog.y};
+  }else{
+    console.log(positionFrogAux);
+    console.log(positionFrog);
+    console.log("entra");
+    positionFrog = { x: --positionFrog.x, y: positionFrog.y };
+  }
+  
+};
+const moveFrogUp = () => {
+  positionFrogAux = { x: positionFrog.x, y: --positionFrog.y };
+  //si y>0
+  if(positionFrogAux.y*cell<=board){
+    console.log(positionFrogAux);
+    console.log("entra");
+    positionFrog = { x: positionFrog.x, y: --positionFrog.y};
+  }else{
+    positionFrog = {x: positionFrog.x, y: positionFrog.y};
+  }
+
+};
+const moveFrogDown = () => {
+  positionFrogAux = { x: positionFrog.x, y: ++positionFrog.y };
+  if(positionFrogAux.y*cell<=board || positionFrogAux.y*cell>=0 || positionFrogAux.x*cell<=board || positionFrogAux.x*cell>=0){
+    console.log(positionFrogAux.y*cell);
+    console.log(board);
+    console.log("entra");
+    positionFrog = { x: positionFrog.x, y: ++positionFrog.y};
+  }else{
+    positionFrog = {x: positionFrog.x, y: positionFrog.y};
+  }
+};
+const checkFrogCollisions = () => {
+  //haurem de pillar la posició actual dels elements tots els obstacles
+  
+}
+
+const movementFrog = (e) => {
+  //moure la rana i comprovar colisions
+  switch (e.key) {
+    case "ArrowLeft":
+      moveFrogLeft();
+      break;
+    case "ArrowRight":
+      moveFrogRight();
+      break;
+    case "ArrowUp":
+      moveFrogUp();
+      break;
+    case "ArrowDown":
+      moveFrogDown();
+      break;
+  }
+  if(["ArrowLeft","ArrowRight","ArrowUp","ArrowDown"].includes(e.key)){
+    //si ho inclou, comprovem colisions
+    console.log("entra")
+    checkFrogCollisions();
+  }
+};
+const restart = () => {
+  window.location.href = "./index.html";
+};
+const drawFrog = (x, y) => {
+  ctx.drawImage(frog, x * cell, y * cell, cell, cell);
+};
 const inici = async () => {
+  document.addEventListener("keydown", movementFrog);
   canvas = document.querySelector("#cv");
   canvas.width = board;
   canvas.height = board;
@@ -162,7 +249,7 @@ const game = () => {
   draw();
   //ara llevem segons
   countDown();
-
+  drawFrog(positionFrog.x, positionFrog.y);
   id = window.setInterval(game, gameSpeed);
 
   //window.requestAnimationFrame(game);
@@ -196,13 +283,11 @@ const draw = () => {
       explotionCounter += gameSpeed;
       ctx.drawImage(explotion, 15 * cell, 10 * cell, cell, cell);
       ctx.drawImage(explotion, 0, 13 * cell, cell, cell);
-
     } else {
       explotionBool = false;
       explotionCounter = 0;
     }
   }
-  
 
   home();
 };
@@ -490,7 +575,7 @@ const updateWar = () => {
           positionsTanksRight.push({ x: (0 + i) * -150, y: 50 * 12 });
           console.log(i);
         }
-        
+
         groupRank_1 = generateNumber();
         secondsWaitRank_1 = generateNumber() * 1000;
       }
