@@ -303,15 +303,15 @@ const inici = async () => {
     ctx = canvas.getContext("2d");
   }
   try {
-    atomicRight = await loadImage("./atomicright.png");
-    atomicLeft = await loadImage("./atomicleft.png");
-    staticBomb = await loadImage("./staticbomb.png");
-    frog = await loadImage("./frog.png");
-    lotus = await loadImage("./lotus.png");
-    ovni = await loadImage("./ovni.png");
-    tankLeft = await loadImage("./tankleft.png");
-    tankRight = await loadImage("./tankright.png");
-    explotion = await loadImage("./explotion.png");
+    atomicRight = await loadImage("./img/atomicright.png");
+    atomicLeft = await loadImage("./img/atomicleft.png");
+    staticBomb = await loadImage("./img/staticbomb.png");
+    frog = await loadImage("./img/frog.png");
+    lotus = await loadImage("./img/lotus.png");
+    ovni = await loadImage("./img/ovni.png");
+    tankLeft = await loadImage("./img/tankleft.png");
+    tankRight = await loadImage("./img/tankright.png");
+    explotion = await loadImage("./img/explotion.png");
   } catch (error) {
     console.error("Error loading images:", error);
   }
