@@ -1,6 +1,6 @@
 const board = 800;
 const cell = 50;
-const gameSpeed = 10;
+gameSpeed = 5;
 //------
 let id = 0;
 //-------
@@ -13,7 +13,7 @@ let directionOvniLeft = -1;
 //16x16
 let currentPhase = 0; //0-15 -> 5 fases
 //------------------------------
-let positionFrogAux = {x:15,y:15};
+let positionFrogAux = { x: 15, y: 15 };
 let positionFrog = { x: 15, y: 15 };
 let positionsTanksRight = [];
 let positionsTanksLeft = [];
@@ -66,28 +66,7 @@ let explotionCounter = 0;
 //-----------------------------
 //fases map
 let map;
-/*(() => { volia fer-ho eficient, xo x hui ja ho tinc be
-  map = new Map();
-  map.set(0, null);
-  map.set(1, [
-    positionsTanksLeft,
-    positionsTanksRight,
-    positionsAtomicBombsRight,
-    positionsAtomicBombsLeft,
-    positionsOvnisLeft,
-    positionsOvnisRight,
-  ]);
-  map.set(2, positionsStaticBombsTransition);
-  //en el lotus haurem de fer la inversa
-  map.set(3, [
-    positionLotus_r7,
-    positionLotus_r8,
-    positionLotus_r8,
-    positionLotus_r10,
-    positionLotus_r11,
-  ]);
-  map.set(4, positionsStaticBombsLast);
-})();*/
+
 const generateNumber = () => {
   return Math.floor(Math.random() * 3) + 1;
 };
@@ -129,46 +108,167 @@ let secondsWaitRank_11 = generateNumber() * 1000;
 const moveFrogRight = () => {
   positionFrogAux = JSON.parse(JSON.stringify(positionFrog));
   //si x>=board
-  if(positionFrogAux.x>=(board/cell)-1){
-    positionFrog = {x: positionFrog.x, y: positionFrog.y};
-  }else{
+  if (positionFrogAux.x >= board / cell - 1) {
+    positionFrog = { x: positionFrog.x, y: positionFrog.y };
+  } else {
     positionFrog = { x: ++positionFrog.x, y: positionFrog.y };
   }
-  
 };
 const moveFrogLeft = () => {
   positionFrogAux = JSON.parse(JSON.stringify(positionFrog));
   //si x<=0
-  if(positionFrogAux.x<=0){
-    positionFrog = {x: positionFrog.x, y: positionFrog.y};
-  }else{
+  if (positionFrogAux.x <= 0) {
+    positionFrog = { x: positionFrog.x, y: positionFrog.y };
+  } else {
     positionFrog = { x: --positionFrog.x, y: positionFrog.y };
   }
-  
 };
 const moveFrogUp = () => {
   positionFrogAux = JSON.parse(JSON.stringify(positionFrog));
   //si x<=0
-  if(positionFrogAux.y<=0){
-    positionFrog = {x: positionFrog.x, y: positionFrog.y};
-  }else{
+  if (positionFrogAux.y <= 0) {
+    positionFrog = { x: positionFrog.x, y: positionFrog.y };
+  } else {
     positionFrog = { x: positionFrog.x, y: --positionFrog.y };
   }
-
 };
 const moveFrogDown = () => {
   positionFrogAux = JSON.parse(JSON.stringify(positionFrog));
   //si x<=0
-  if(positionFrogAux.y>=(board/cell)-1){
-    positionFrog = {x: positionFrog.x, y: positionFrog.y};
-  }else{
+  if (positionFrogAux.y >= board / cell - 1) {
+    positionFrog = { x: positionFrog.x, y: positionFrog.y };
+  } else {
     positionFrog = { x: positionFrog.x, y: ++positionFrog.y };
   }
 };
 const checkFrogCollisions = () => {
   //haurem de pillar la posició actual dels elements tots els obstacles
-  
-}
+
+  let frogX = positionFrog.x * 50;
+  if (positionFrog.y === 13) {
+    let collision = positionsAtomicBombsLeft.some((bomba) => {
+      //bombes mesuren 100x50
+      //com comprovem abans la y no cal comprovarla, anem directament a la x
+      //desplaçament d dreta a esquerra, vegem si esta en la primera x o x + 50
+      const bombX = bomba.x;
+      if (bombX <= frogX && bombX + 100 >= frogX) {
+        return true;
+      }
+      return false;
+    });
+    return collision;
+  }
+  if (positionFrog.y === 12) {
+    //ara comprovem els tanques d'esquerra a dreta estos 150 x 50
+    collision = positionsTanksRight.some((tank) => {
+      //bombes mesuren 100x50
+      //com comprovem abans la y no cal comprovarla, anem directament a la x
+      //desplaçament d dreta a esquerra, vegem si esta en la primera x o x + 50
+      const tankX = tank.x;
+      if (tankX <= frogX && tankX + 150 >= frogX) {
+        return true;
+      }
+      return false;
+    });
+    return collision;
+  }
+
+  if (positionFrog.y === 11) {
+    //ara comprovem els tanques d'esquerra a dreta estos 150 x 50
+    collision = positionsOvnisLeft.some((ovni) => {
+      //bombes mesuren 100x50
+      //com comprovem abans la y no cal comprovarla, anem directament a la x
+      //desplaçament d dreta a esquerra, vegem si esta en la primera x o x + 50
+      const ovniX = ovni.x;
+      if (ovniX === frogX) {
+        return true;
+      }
+      return false;
+    });
+    return collision;
+  }
+  if (positionFrog.y === 10) {
+    collision = positionsAtomicBombsRight.some((bomb) => {
+      const bombX = bomb.x;
+      if (bombX <= frogX && bombX + 100 >= frogX) {
+        return true;
+      }
+      return false;
+    });
+    return collision;
+  }
+  if (positionFrog.y === 9) {
+    collision = positionsTanksLeft.some((tank) => {
+      const tankX = tank.x;
+      if (tankX <= frogX && tankX + 150 >= frogX) {
+        return true;
+      }
+      return false;
+    });
+    return collision;
+  }
+  if (positionFrog.y === 8) {
+    collision = positionsOvnisRight.some((ovni) => {
+      const ovniX = ovni.x;
+      if (ovniX === frogX) {
+        return true;
+      }
+      return false;
+    });
+    return collision;
+  }
+  if (positionFrog.y === 7) {
+    collision = positionsStaticBombsTransition.some((staticBomb) => {
+      const staticBombX = staticBomb.x;
+      if (staticBombX === frogX / 50) {
+        return true;
+      }
+      return false;
+    });
+    return collision;
+  }
+  //este del lotus es fotut
+  if (positionFrog.y === 6) {
+    collision = positionLotus_r7.some(
+      (lotus) => Math.abs(lotus.x - frogX) <= 50
+    );
+    return !collision;
+  }
+  if (positionFrog.y === 5) {
+    collision = positionLotus_r8.some(
+      (lotus) => Math.abs(lotus.x - frogX) <= 50
+    );
+    return !collision;
+  }
+  if (positionFrog.y === 4) {
+    collision = positionLotus_r9.some(
+      (lotus) => Math.abs(lotus.x - frogX) <= 50
+    );
+    return !collision;
+  }
+  if (positionFrog.y === 3) {
+    ccollision = positionLotus_r10.some(
+      (lotus) => Math.abs(lotus.x - frogX) <= 50
+    );
+    return !collision;
+  }
+  if (positionFrog.y === 2) {
+    collision = positionLotus_r11.some(
+      (lotus) => Math.abs(lotus.x - frogX) <= 50
+    );
+    return !collision;
+  }
+  if (positionFrog.y === 1) {
+    collision = positionsStaticBombsLast.some((staticBomb) => {
+      const staticBombX = staticBomb.x;
+      if (staticBombX === frogX / 50) {
+        return true;
+      }
+      return false;
+    });
+    return collision;
+  }
+};
 
 const movementFrog = (e) => {
   //moure la rana i comprovar colisions
@@ -185,11 +285,6 @@ const movementFrog = (e) => {
     case "ArrowDown":
       moveFrogDown();
       break;
-  }
-  if(["ArrowLeft","ArrowRight","ArrowUp","ArrowDown"].includes(e.key)){
-    //si ho inclou, comprovem colisions
-    console.log("entra")
-    checkFrogCollisions();
   }
 };
 const restart = () => {
@@ -220,6 +315,23 @@ const inici = async () => {
   } catch (error) {
     console.error("Error loading images:", error);
   }
+
+  document
+    .getElementById("easy")
+    .addEventListener("click", () => (gameSpeed = 40));
+  document
+    .getElementById("btnNormal")
+    .addEventListener("click", () => (gameSpeed = 30));
+  document
+    .getElementById("btnMedium")
+    .addEventListener("click", () => (gameSpeed = 20));
+  document
+    .getElementById("btnHard")
+    .addEventListener("click", () => (gameSpeed = 10));
+  document
+    .getElementById("btnAI")
+    .addEventListener("click", () => (gameSpeed = 5));
+
   game();
 };
 const loadImage = (src) => {
@@ -232,12 +344,12 @@ const loadImage = (src) => {
 };
 const game = () => {
   window.clearInterval(id);
-  fase = getFrogCurrentPhase();
   update();
   draw();
   //ara llevem segons
   countDown();
   drawFrog(positionFrog.x, positionFrog.y);
+  checkFrogCollisions() ? restart() : true;
   id = window.setInterval(game, gameSpeed);
 
   //window.requestAnimationFrame(game);
@@ -561,7 +673,6 @@ const updateWar = () => {
       if (positionsTanksRight[positionsTanksRight.length - 1].x >= 550) {
         for (let i = 0; i < groupRank_1; i++) {
           positionsTanksRight.push({ x: (0 + i) * -150, y: 50 * 12 });
-          console.log(i);
         }
 
         groupRank_1 = generateNumber();
@@ -573,7 +684,6 @@ const updateWar = () => {
       positionsTanksRight.push({ x: (0 + i) * -150, y: 50 * 12 });
     }
   }
-  console.log(positionsTanksRight);
   //i ara la bomba de dreta a esquerra
   if (positionsAtomicBombsLeft.length > 0) {
     if (positionsAtomicBombsLeft[0].x > 0) {
@@ -608,22 +718,5 @@ const warPhase = () => {
     [tankRight, atomicLeft, ovni, tankLeft, atomicRight, ovni]
   );
 };
-const getFrogCurrentPhase = () => {
-  //5 fases  -> 15 i 14 fase 0 (no colisions)
-  // -> 13,12,11,10,9,8 fase 1 (colisions: tankes, bomba atomica i ovni)
-  // -> 7 fase 2 (colisions:-> bomba)
-  // -> 6,5,4,3,2 fase 3 (el riu)
-  // -> 1 , 0 fase 4 (les bombes)
-  if ([15, 14].includes(positionFrog.y)) {
-    return 0;
-  } else if ([13, 12, 11, 10, 9, 8].includes(positionFrog.y)) {
-    return 1;
-  } else if ([7].includes(positionFrog.y)) {
-    return 2;
-  } else if ([6, 5, 4, 3, 2].includes(positionFrog.y)) {
-    return 3;
-  } else if ([1, 0].includes(positionFrog.y)) {
-    return 4;
-  }
-};
+
 window.onload = inici;
