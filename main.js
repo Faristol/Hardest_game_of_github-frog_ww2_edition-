@@ -127,54 +127,42 @@ let secondsWaitRank_11 = generateNumber() * 1000;
 //ací controlem el moviment de la granota
 
 const moveFrogRight = () => {
-  positionFrogAux = {x: ++positionFrog.x, y: positionFrog.y};
-  if(positionFrogAux.y*cell<=board || positionFrogAux.y*cell>=0 || positionFrogAux.x*cell<=board || positionFrogAux.x*cell>=0){
-    console.log(positionFrogAux);
-    console.log("entra");
-    positionFrog = { x: ++positionFrog.x, y: positionFrog.y };
-  }else{
+  positionFrogAux = JSON.parse(JSON.stringify(positionFrog));
+  //si x>=board
+  if(positionFrogAux.x>=(board/cell)-1){
     positionFrog = {x: positionFrog.x, y: positionFrog.y};
+  }else{
+    positionFrog = { x: ++positionFrog.x, y: positionFrog.y };
   }
   
 };
 const moveFrogLeft = () => {
-  positionFrogAux = {x: --positionFrog.x, y: positionFrog.y};
+  positionFrogAux = JSON.parse(JSON.stringify(positionFrog));
   //si x<=0
   if(positionFrogAux.x<=0){
-    console.log(positionFrog);
-    console.log(positionFrogAux);
-    console.log("es negativa");
-    positionFrogAux = {x: positionFrog.x, y: positionFrog.y};
     positionFrog = {x: positionFrog.x, y: positionFrog.y};
   }else{
-    console.log(positionFrogAux);
-    console.log(positionFrog);
-    console.log("entra");
     positionFrog = { x: --positionFrog.x, y: positionFrog.y };
   }
   
 };
 const moveFrogUp = () => {
-  positionFrogAux = { x: positionFrog.x, y: --positionFrog.y };
-  //si y>0
-  if(positionFrogAux.y*cell<=board){
-    console.log(positionFrogAux);
-    console.log("entra");
-    positionFrog = { x: positionFrog.x, y: --positionFrog.y};
-  }else{
+  positionFrogAux = JSON.parse(JSON.stringify(positionFrog));
+  //si x<=0
+  if(positionFrogAux.y<=0){
     positionFrog = {x: positionFrog.x, y: positionFrog.y};
+  }else{
+    positionFrog = { x: positionFrog.x, y: --positionFrog.y };
   }
 
 };
 const moveFrogDown = () => {
-  positionFrogAux = { x: positionFrog.x, y: ++positionFrog.y };
-  if(positionFrogAux.y*cell<=board || positionFrogAux.y*cell>=0 || positionFrogAux.x*cell<=board || positionFrogAux.x*cell>=0){
-    console.log(positionFrogAux.y*cell);
-    console.log(board);
-    console.log("entra");
-    positionFrog = { x: positionFrog.x, y: ++positionFrog.y};
-  }else{
+  positionFrogAux = JSON.parse(JSON.stringify(positionFrog));
+  //si x<=0
+  if(positionFrogAux.y>=(board/cell)-1){
     positionFrog = {x: positionFrog.x, y: positionFrog.y};
+  }else{
+    positionFrog = { x: positionFrog.x, y: ++positionFrog.y };
   }
 };
 const checkFrogCollisions = () => {
